@@ -1,15 +1,23 @@
 import React from 'react'
 import personService from './../services/persons'
 
-const Persons = ({ persons, newInput, setPersons }) => {
+const Persons = ({ persons, newInput, setPersons, setMessage, setColorToggle }) => {
     const personsToShow = persons.filter(person => person.name.toLowerCase().includes(newInput.toLowerCase()))
 
     const deletePerson = id => {
         const result = window.confirm(`Delete ${persons.find(person => person.id === id).name} ?`)
         if (result) {
+            const temp = persons.find(person => person.id === id).name
             personService.deleteAxios(id).then(response => {
                 setPersons(persons.filter(person => person.id !== id))
             })
+            setColorToggle(true)
+            setMessage(
+                `Removed '${temp}'`
+            )
+            setTimeout(() => {
+                setMessage(null)
+            }, 10000)
         }
     }
 

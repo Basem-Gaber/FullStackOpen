@@ -1,7 +1,8 @@
 import React from 'react'
 import personService from './../services/persons'
 
-const PersonForm = ({ persons, newName, newNumber, personsSetter, nameSetter, numberSetter }) => {
+
+const PersonForm = ({ persons, newName, newNumber, personsSetter, nameSetter, numberSetter, setMessage, setColorToggle }) => {
     const addPerson = (event) => {
         event.preventDefault()
         console.log('button clicked', event.target)
@@ -23,7 +24,23 @@ const PersonForm = ({ persons, newName, newNumber, personsSetter, nameSetter, nu
                                 number: newNumber
                             })
                             .then(response => {
-                                personsSetter(persons.map(person => person.name !== newName ? person : response.data))
+                                personsSetter(persons.map(person => person.name !== newName ? person : response.data))        
+                                setColorToggle(true)
+                                setMessage(
+                                    `Updated number of '${persons[i].name}'`
+                                )
+                                setTimeout(() => {
+                                    setMessage(null)
+                                }, 10000)
+                            })
+                            .catch(error => {
+                                setColorToggle(false)
+                                setMessage(
+                                    `Information of '${persons[i].name}' has already been removed from the server.`
+                                )
+                                setTimeout(() => {
+                                    setMessage(null)
+                                }, 10000)
                             })
                     }
                 }
@@ -43,6 +60,13 @@ const PersonForm = ({ persons, newName, newNumber, personsSetter, nameSetter, nu
                     nameSetter('')
                     numberSetter('')
                 })
+            setColorToggle(true)
+            setMessage(
+                `Added '${personObject.name}'`
+            )
+            setTimeout(() => {
+                setMessage(null)
+            }, 10000)
         }
     }
 
