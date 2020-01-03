@@ -24,6 +24,14 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(response.data)
       })
+      .catch(error => {
+        setColorToggle(false)
+        setMessage(error.response.data)
+        setTimeout(() => {
+          setMessage(null)
+        }, 10000)
+        console.log(error.response.data)
+      })
   }, [])
 
   return (

@@ -7,47 +7,48 @@ const PersonForm = ({ persons, newName, newNumber, personsSetter, nameSetter, nu
         event.preventDefault()
         console.log('button clicked', event.target)
         let bool = false
-        let i
-        for (i in persons) {
-            console.log(`now name is ${persons[i].name}`)
-            if (persons[i].name === newName) {
-                if (persons[i].number === newNumber) {
-                    alert(`${newName} is already added to phonebook`)
-                }
-                else {
-                    const result = window.confirm(`${persons[i].name} is already added to the phonebook, replace old number with new one ?`)
-                    if (result) {
-                        console.log(persons[i].id)
-                        personService
-                            .update(persons[i].id, {
-                                name: newName,
-                                number: newNumber
-                            })
-                            .then(response => {
-                                personsSetter(persons.map(person => person.name !== newName ? person : response.data))        
-                                setColorToggle(true)
-                                setMessage(
-                                    `Updated number of '${persons[i].name}'`
-                                )
-                                setTimeout(() => {
-                                    setMessage(null)
-                                }, 10000)
-                            })
-                            .catch(error => {
-                                setColorToggle(false)
-                                setMessage(
-                                    `Information of '${persons[i].name}' has already been removed from the server.`
-                                )
-                                setTimeout(() => {
-                                    setMessage(null)
-                                }, 10000)
-                            })
-                    }
+
+        const existingPerson = persons.find(person => person.name === newName)
+        console.log(existingPerson)
+        if (existingPerson) {
+            if (existingPerson.number === newNumber) {
+                alert(`${newName} is already added to phonebook`)
+                bool = true
+            }
+            else {
+                const result = window.confirm(`${existingPerson.name} is already added to the phonebook, replace old number with new one ?`)
+                if (result) {
+                    console.log(existingPerson.name)
+                    personService
+                        .update(existingPerson.id, {
+                            name: newName,
+                            number: newNumber
+                        })
+                        .then(response => {
+                            personsSetter(persons.map(person => person.name !== newName ? person : response.data))
+                            setColorToggle(true)
+                            setMessage(
+                                `Updated number of '${existingPerson.name}'`
+                            )
+                            setTimeout(() => {
+                                setMessage(null)
+                            }, 10000)
+                        })
+                        .catch(error => {
+                            setColorToggle(false)
+                            setMessage(
+                                `Information of '${existingPerson.name}' has already been removed from the server.`
+                            )
+                            setTimeout(() => {
+                                setMessage(null)
+                            }, 10000)
+                        })
                 }
                 bool = true
-                break
             }
         }
+
+
         if (!bool) {
             const personObject = {
                 name: newName,
@@ -59,14 +60,25 @@ const PersonForm = ({ persons, newName, newNumber, personsSetter, nameSetter, nu
                     personsSetter(persons.concat(response.data))
                     nameSetter('')
                     numberSetter('')
+                    setColorToggle(true)
+                    setMessage(
+                        `Added '${response.data.name}'`
+                    )
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 10000)
                 })
-            setColorToggle(true)
-            setMessage(
-                `Added '${personObject.name}'`
-            )
-            setTimeout(() => {
-                setMessage(null)
-            }, 10000)
+                .catch(error => {
+                    nameSetter('')
+                    numberSetter('')
+                    setColorToggle(false)
+                    setMessage(error.response.data)
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 10000)
+                    console.log(error.response.data)
+                })
+
         }
     }
 

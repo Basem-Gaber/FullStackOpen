@@ -10,22 +10,29 @@ const Persons = ({ persons, newInput, setPersons, setMessage, setColorToggle }) 
             const temp = persons.find(person => person.id === id).name
             personService.deleteAxios(id).then(response => {
                 setPersons(persons.filter(person => person.id !== id))
+                setColorToggle(true)
+                setMessage(
+                    `Removed '${temp}'`
+                )
+                setTimeout(() => {
+                    setMessage(null)
+                }, 10000)
+            }).catch(error => {
+                setColorToggle(false)
+                setMessage(error.response.data)
+                setTimeout(() => {
+                    setMessage(null)
+                }, 10000)
+                console.log(error.response.data)
             })
-            setColorToggle(true)
-            setMessage(
-                `Removed '${temp}'`
-            )
-            setTimeout(() => {
-                setMessage(null)
-            }, 10000)
         }
     }
 
     const rows = () => personsToShow.map(person =>
-            <Person
-                key={person.name}
-            person = {person}
-            deletePerson = {() => deletePerson(person.id)}
+        <Person
+            key={person.name}
+            person={person}
+            deletePerson={() => deletePerson(person.id)}
         />
     )
     return (

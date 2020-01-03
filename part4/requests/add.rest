@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InR3cCIsImlkIjoiNWUwZjliYjRjMzI1OTQwZDA0YjIzNDc2IiwiaWF0IjoxNTc4MDgzNTcyfQ.F0Cp07dssTysoWVDRjO5QiQXVbJ15YMXgHofAHEWxLs
+
+{
+    "title": "Seventh Blog",
+    "author": "Basem M",
+    "url": "test.basem",
+    "likes": "4"
+}
